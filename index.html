@@ -3,103 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Ads Bot - Tasks</title>
+    <title>Vitas Ads Bot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://static.onclicka.com/js/onclicka.js"></script>
     <style>
-        body { background-color: #0b0e11; color: #ffffff; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
-        .container { background: #1c2128; padding: 20px; border-radius: 20px; text-align: center; width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .balance-value { font-size: 30px; font-weight: bold; color: #ffcc00; margin: 10px 0; }
-        .section-title { text-align: left; width: 100%; margin: 20px 0 10px 10px; font-size: 18px; color: #aaa; }
-        .btn { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        body { background-color: #0b0e11; color: #ffffff; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; direction: rtl; }
+        .container { background: #1c2128; padding: 20px; border-radius: 20px; text-align: center; width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin-bottom: 20px; border: 1px solid #30363d; }
+        .balance-title { font-size: 14px; color: #aaa; margin-bottom: 5px; }
+        .balance-value { font-size: 35px; font-weight: bold; color: #ffcc00; margin-bottom: 20px; }
+        .btn { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-ad { background: #ffcc00; color: #000; }
-        .task-card { background: #2d333b; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .task-info { text-align: left; }
-        .task-reward { color: #4cd964; font-size: 14px; }
-        .btn-task { background: #0088cc; color: #fff; width: auto; padding: 8px 15px; font-size: 14px; }
-        .btn-withdraw { background: #eb4034; color: white; opacity: 0.5; }
-        .btn-withdraw.active { opacity: 1; }
+        .section-title { width: 100%; text-align: right; color: #8b949e; font-size: 16px; margin-bottom: 10px; padding-right: 10px; }
+        .task-card { background: #2d333b; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; width: 90%; margin-bottom: 15px; border: 1px solid #444c56; }
+        .task-info { text-align: right; }
+        .task-name { font-weight: bold; font-size: 15px; }
+        .task-reward { color: #4cd964; font-size: 13px; margin-top: 4px; }
+        .btn-task { background: #0088cc; color: #fff; width: auto; padding: 8px 18px; font-size: 14px; border-radius: 10px; border: none; }
+        .btn-withdraw { background: #30363d; color: #8b949e; cursor: not-allowed; }
+        .btn-withdraw.active { background: #238636; color: white; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div style="font-size: 14px; color: #aaa;">Current Balance</div>
+        <div class="balance-title">رصيدك الحالي (بالدولار)</div>
         <div id="balance" class="balance-value">0.0000</div>
-        <button id="adBtn" class="btn btn-ad">Watch Ad for Reward 📺</button>
+        <button id="adBtn" class="btn btn-ad">كسب المال من الإعلانات 📺</button>
     </div>
 
-    <div class="section-title">Available Tasks</div>
-    <div class="container">
-        <div class="task-card">
-            <div class="task-info">
-                <div>Follow Channel</div>
-                <div class="task-reward">+0.0012 USD</div>
-            </div>
-            <button onclick="doTask('https://t.me/YOUR_CHANNEL', 0.0012)" class="btn btn-task">Join</button>
+    <div class="section-title">المهام السريعة</div>
+    <div class="task-card">
+        <div class="task-info">
+            <div class="task-name">متابعة قناة التليجرام</div>
+            <div class="task-reward">+0.0012$ كاش</div>
         </div>
+        <button onclick="doTask()" class="btn btn-task">انضمام</button>
     </div>
 
-    <div class="section-title">Withdrawal</div>
+    <div class="section-title">سحب الأرباح</div>
     <div class="container">
-        <p style="font-size: 12px; color: #aaa;">Minimum withdraw: $2.00</p>
-        <button id="withdrawBtn" onclick="checkWithdraw()" class="btn btn-withdraw">Withdraw 💸</button>
+        <p style="font-size: 13px; color: #8b949e; margin-bottom: 15px;">الحد الأدنى للسحب هو 2.00$</p>
+        <button id="withdrawBtn" onclick="checkWithdraw()" class="btn btn-withdraw">طلب سحب الأرباح 💸</button>
     </div>
 
     <script>
-        let balance = parseFloat(localStorage.getItem('userBalance')) || 0;
-        const withdrawLimit = 2.0;
+        // تحميل الرصيد المحفوظ
+        let balance = parseFloat(localStorage.getItem('vitas_user_balance')) || 0;
+        const targetWithdraw = 2.00;
         updateUI();
 
-        // إعداد الإعلانات
+        // إعدادات إعلانات Onclicka الخاصة بك
         const adConfig = { zoneId: 436685 };
 
+        // عند الضغط على زر الإعلانات
         document.getElementById('adBtn').onclick = function() {
             if (window.onclicka) {
                 window.onclicka('show', adConfig);
             } else {
-                alert("الإعلان قيد التحضير، يرجى المحاولة بعد قليل.");
+                alert("الإعلانات قيد الموافقة من الموقع، يرجى المحاولة لاحقاً.");
             }
         };
 
+        // مكافأة الإعلان عند الانتهاء
         window.onclicka('onAdCompleted', () => {
-            addMoney(0.001); // مكافأة الإعلان
+            addBalance(0.0010); // يربح المستخدم 0.0010 عن كل إعلان
         });
 
-        // وظيفة تنفيذ المهام
-        function doTask(url, reward) {
-            window.open(url, '_blank');
-            // ملاحظة: تليجرام ويب لا يمكنه التأكد 100% من الانضمام برمجياً بدون بوت خلفي (Backend)
-            // لكن سنضيف المبلغ بعد الضغط كتحفيز للمستخدم
+        // تنفيذ مهمة القناة
+        function doTask() {
+            window.open('https://t.me/yacine5556', '_blank');
             setTimeout(() => {
-                addMoney(reward);
-                alert("Task completed! Reward added.");
-            }, 2000);
+                // نتحقق إذا كان قد حصل على المكافأة مسبقاً (اختياري)
+                if(!localStorage.getItem('task_done')) {
+                    addBalance(0.0012);
+                    localStorage.setItem('task_done', 'true');
+                    alert("شكراً لانضمامك! تم إضافة 0.0012$ لرصيدك.");
+                } else {
+                    alert("لقد حصلت على مكافأة هذه المهمة مسبقاً.");
+                }
+            }, 3000);
         }
-
-        function addMoney(amount) {
-            balance += amount;
-            localStorage.setItem('userBalance', balance);
-            updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('balance').innerText = balance.toFixed(4);
-            const wBtn = document.getElementById('withdrawBtn');
-            if (balance >= withdrawLimit) {
-                wBtn.classList.add('active');
-                wBtn.style.opacity = "1";
-            }
-        }
-
-        function checkWithdraw() {
-            if (balance < withdrawLimit) {
-                alert("عذراً، يجب أن يصل رصيدك إلى 2 دولار للسحب.");
-            } else {
-                alert("سيتم نقلك لصفحة السحب...");
-                // هنا تضع رابط صفحة السحب الخاصة بك
-            }
-        }
-    </script>
-</body>
-</html>
