@@ -54,15 +54,14 @@
         const targetWithdraw = 2.00;
         updateUI();
 
-        // كود الإعلانات الخاص بك Onclicka
         const adConfig = { zoneId: 436685 };
 
-        // وظيفة دعوة الأصدقاء - قمت ببرمجتها لتعمل تلقائياً
+        // وظيفة دعوة الأصدقاء - تم وضع رابط تطبيق الويب الخاص بك
         function inviteFriends() {
             const botLink = 'https://t.me/VTCBot'; 
-            const text = 'ادخل جرب هذا البوت، يمكنك ربح المال من مشاهدة الإعلانات والسحب مضمون! 💰';
+            const text = 'ادخل جرب هذا البوت لربح المال من الإعلانات! رابط التطبيق: https://vitas-ads-app.vercel.app/';
             const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(botLink)}&text=${encodeURIComponent(text)}`;
-            window.open(shareUrl, '_blank');
+            window.location.href = shareUrl;
         }
 
         document.getElementById('adBtn').onclick = function() {
@@ -77,7 +76,6 @@
             addBalance(0.0010);
         });
 
-        // مهمة القناة الجديدة @fotgy
         function doTask() {
             const myChannel = 'https://t.me/fotgy';
             window.open(myChannel, '_blank');
@@ -85,7 +83,7 @@
                 if(!localStorage.getItem('channel_task_done')) {
                     addBalance(0.0012);
                     localStorage.setItem('channel_task_done', 'true');
-                    alert("تم إضافة 0.0012$ لرصيدك بنجاح!");
+                    alert("تم إضافة المكافأة بنجاح!");
                 } else {
                     alert("لقد حصلت على مكافأة هذه المهمة سابقاً.");
                 }
@@ -109,9 +107,9 @@
 
         function checkWithdraw() {
             if (balance < targetWithdraw) {
-                alert("يجب أن تصل لـ 2 دولار لفتح خاصية السحب.");
+                alert("يجب أن تصل لـ 2 دولار للسحب.");
             } else {
-                alert("تم استلام طلب السحب، سيتم التواصل معك قريباً.");
+                alert("تم استلام طلب السحب، سيتم التواصل معك.");
             }
         }
     </script>
