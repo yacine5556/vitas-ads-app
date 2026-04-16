@@ -47,13 +47,14 @@
         const targetWithdraw = 2.00;
         updateUI();
 
+        // كود الإعلانات الخاص بك
         const adConfig = { zoneId: 436685 };
 
         document.getElementById('adBtn').onclick = function() {
             if (window.onclicka) {
                 window.onclicka('show', adConfig);
             } else {
-                alert("الإعلان قيد التحضير، يرجى المحاولة بعد قليل.");
+                alert("الإعلانات قيد التحضير من الموقع، يرجى الانتظار.");
             }
         };
 
@@ -61,8 +62,14 @@
             addBalance(0.0010);
         });
 
+        // --- تعديل رابط قناتك هنا فقط ---
         function doTask() {
-            window.open('https://t.me/yacine5556', '_blank');
+            const myChannel = 'ضع_رابط_قناتك_هنا'; // مثال: 'https://t.me/fotgy
+            
+            // فتح القناة بطريقة مضمونة
+            window.open(myChannel, '_blank');
+
+            // إضافة الرصيد بعد الضغط
             setTimeout(() => {
                 if(!localStorage.getItem('channel_task_done')) {
                     addBalance(0.0012);
@@ -71,7 +78,7 @@
                 } else {
                     alert("لقد قمت بهذه المهمة مسبقاً.");
                 }
-            }, 3000);
+            }, 2000);
         }
 
         function addBalance(amount) {
@@ -85,14 +92,15 @@
             const wBtn = document.getElementById('withdrawBtn');
             if (balance >= targetWithdraw) {
                 wBtn.classList.add('active');
+                wBtn.innerText = "اسحب أرباحك الآن!";
             }
         }
 
         function checkWithdraw() {
             if (balance < targetWithdraw) {
-                alert("يجب أن يصل رصيدك إلى 2 دولار للسحب.");
+                alert("عذراً، تحتاج لجمع 2 دولار للسحب.");
             } else {
-                alert("تم إرسال طلب السحب للمراجعة.");
+                alert("تم إرسال طلب السحب للدعم.");
             }
         }
     </script>
