@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,25 +7,86 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://static.onclicka.com/js/onclicka.js"></script>
     <style>
-        body { background-color: #0b0e11; color: #ffffff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background: #1c2128; padding: 25px; border-radius: 15px; text-align: center; width: 85%; }
-        .balance { font-size: 35px; color: #ffcc00; font-weight: bold; margin: 20px 0; }
-        .btn { background: #0088cc; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
-        .btn-ad { background: linear-gradient(45deg, #ffcc00, #ffa500); color: #000; }
+        body {
+            background-color: #0b0e11;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #1c2128;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            width: 85%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .balance-title {
+            font-size: 18px;
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+        .balance-value {
+            font-size: 35px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-ad {
+            background: #ffcc00;
+            color: #000;
+        }
+        .btn-withdraw {
+            background: #0088cc;
+            color: white;
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div>💰 Current Balance</div>
-        <div class="balance">0.00</div>
+        <div class="balance-title">💰 Current Balance</div>
+        <div id="balance" class="balance-value">0.00</div>
+
         <button id="adBtn" class="btn btn-ad">Watch Ad for Reward 📺</button>
-        <button class="btn">Withdraw 💸</button>
+        <button class="btn btn-withdraw">Withdraw 💸</button>
     </div>
+
     <script>
-        onclicka('init', { zoneId: 436685 });
-        document.getElementById('adBtn').onclick = function() {
-            onclicka('show');
+        // إعداد إعلانات Onclicka بالرقم الخاص بك
+        const adConfig = {
+            zoneId: 436685
         };
+
+        // تفعيل زر الإعلانات
+        document.getElementById('adBtn').onclick = function() {
+            if (window.onclicka) {
+                window.onclicka('show', adConfig);
+            } else {
+                alert("الإعلان قيد التحضير، يرجى المحاولة بعد قليل.");
+            }
+        };
+
+        // وظيفة افتراضية لزيادة الرصيد (للتوضيح فقط)
+        window.onclicka('onAdCompleted', () => {
+            let currentBal = parseFloat(document.getElementById('balance').innerText);
+            document.getElementById('balance').innerText = (currentBal + 0.01).toFixed(2);
+        });
     </script>
 </body>
 </html>
