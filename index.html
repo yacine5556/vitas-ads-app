@@ -12,6 +12,7 @@
         .balance-value { font-size: 35px; font-weight: bold; color: #ffcc00; margin-bottom: 20px; }
         .btn { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-ad { background: #ffcc00; color: #000; }
+        .btn-invite { background: #ffffff; color: #000; font-size: 14px; }
         .section-title { width: 100%; text-align: right; color: #8b949e; font-size: 16px; margin-bottom: 10px; padding-right: 10px; }
         .task-card { background: #2d333b; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; width: 90%; margin-bottom: 15px; border: 1px solid #444c56; }
         .btn-task { background: #0088cc; color: #fff; width: auto; padding: 8px 18px; font-size: 14px; border-radius: 10px; border: none; }
@@ -25,6 +26,12 @@
         <div style="font-size: 14px; color: #aaa;">رصيدك الحالي (بالدولار)</div>
         <div id="balance" class="balance-value">0.0000</div>
         <button id="adBtn" class="btn btn-ad">كسب المال من الإعلانات 📺</button>
+    </div>
+
+    <div class="section-title">ضاعف أرباحك</div>
+    <div class="container">
+        <p style="font-size: 12px; color: #aaa; margin-bottom: 10px;">شارك البوت مع أصدقائك لزيادة دخلك!</p>
+        <button onclick="inviteFriends()" class="btn btn-invite">ارسل رابط الدعوة لأصدقائك 🔗</button>
     </div>
 
     <div class="section-title">المهام السريعة</div>
@@ -47,13 +54,22 @@
         const targetWithdraw = 2.00;
         updateUI();
 
+        // كود الإعلانات الخاص بك Onclicka
         const adConfig = { zoneId: 436685 };
+
+        // وظيفة دعوة الأصدقاء - قمت ببرمجتها لتعمل تلقائياً
+        function inviteFriends() {
+            const botLink = 'https://t.me/VTCBot'; 
+            const text = 'ادخل جرب هذا البوت، يمكنك ربح المال من مشاهدة الإعلانات والسحب مضمون! 💰';
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(botLink)}&text=${encodeURIComponent(text)}`;
+            window.open(shareUrl, '_blank');
+        }
 
         document.getElementById('adBtn').onclick = function() {
             if (window.onclicka) {
                 window.onclicka('show', adConfig);
             } else {
-                alert("الإعلان قيد التحضير من الموقع، يرجى الانتظار.");
+                alert("الإعلانات قيد المراجعة، حاول لاحقاً.");
             }
         };
 
@@ -61,19 +77,17 @@
             addBalance(0.0010);
         });
 
-        // تم تحديث الرابط الجديد هنا
+        // مهمة القناة الجديدة @fotgy
         function doTask() {
             const myChannel = 'https://t.me/fotgy';
-            
             window.open(myChannel, '_blank');
-
             setTimeout(() => {
                 if(!localStorage.getItem('channel_task_done')) {
                     addBalance(0.0012);
                     localStorage.setItem('channel_task_done', 'true');
-                    alert("تمت المهمة بنجاح! تم إضافة المكافأة.");
+                    alert("تم إضافة 0.0012$ لرصيدك بنجاح!");
                 } else {
-                    alert("لقد قمت بهذه المهمة مسبقاً.");
+                    alert("لقد حصلت على مكافأة هذه المهمة سابقاً.");
                 }
             }, 2000);
         }
@@ -95,9 +109,9 @@
 
         function checkWithdraw() {
             if (balance < targetWithdraw) {
-                alert("عذراً، تحتاج لجمع 2 دولار للسحب.");
+                alert("يجب أن تصل لـ 2 دولار لفتح خاصية السحب.");
             } else {
-                alert("تم إرسال طلب السحب للمراجعة.");
+                alert("تم استلام طلب السحب، سيتم التواصل معك قريباً.");
             }
         }
     </script>
