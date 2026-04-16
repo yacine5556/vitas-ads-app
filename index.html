@@ -47,14 +47,13 @@
         const targetWithdraw = 2.00;
         updateUI();
 
-        // كود الإعلانات الخاص بك
         const adConfig = { zoneId: 436685 };
 
         document.getElementById('adBtn').onclick = function() {
             if (window.onclicka) {
                 window.onclicka('show', adConfig);
             } else {
-                alert("الإعلانات قيد التحضير من الموقع، يرجى الانتظار.");
+                alert("الإعلان قيد التحضير من الموقع، يرجى الانتظار.");
             }
         };
 
@@ -62,19 +61,17 @@
             addBalance(0.0010);
         });
 
-        // --- تعديل رابط قناتك هنا فقط ---
+        // تم تحديث الرابط الجديد هنا
         function doTask() {
-            const myChannel = 'ضع_رابط_قناتك_هنا'; // مثال: 'https://t.me/fotgy
+            const myChannel = 'https://t.me/fotgy';
             
-            // فتح القناة بطريقة مضمونة
             window.open(myChannel, '_blank');
 
-            // إضافة الرصيد بعد الضغط
             setTimeout(() => {
                 if(!localStorage.getItem('channel_task_done')) {
                     addBalance(0.0012);
                     localStorage.setItem('channel_task_done', 'true');
-                    alert("تمت المهمة! تمت إضافة 0.0012$ لرصيدك.");
+                    alert("تمت المهمة بنجاح! تم إضافة المكافأة.");
                 } else {
                     alert("لقد قمت بهذه المهمة مسبقاً.");
                 }
@@ -100,7 +97,7 @@
             if (balance < targetWithdraw) {
                 alert("عذراً، تحتاج لجمع 2 دولار للسحب.");
             } else {
-                alert("تم إرسال طلب السحب للدعم.");
+                alert("تم إرسال طلب السحب للمراجعة.");
             }
         }
     </script>
