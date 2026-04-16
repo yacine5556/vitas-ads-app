@@ -3,77 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Ads Bot</title>
+    <title>Vitas Ads Bot - Tasks</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://static.onclicka.com/js/onclicka.js"></script>
     <style>
-        body {
-            background-color: #0b0e11;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: #1c2128;
-            padding: 25px;
-            border-radius: 20px;
-            text-align: center;
-            width: 85%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .balance-title {
-            font-size: 18px;
-            color: #ffcc00;
-            margin-bottom: 10px;
-        }
-        .balance-value {
-            font-size: 35px;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-        .btn {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-ad {
-            background: #ffcc00;
-            color: #000;
-        }
-        .btn-withdraw {
-            background: #0088cc;
-            color: white;
-        }
+        body { background-color: #0b0e11; color: #ffffff; font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
+        .container { background: #1c2128; padding: 20px; border-radius: 20px; text-align: center; width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .balance-value { font-size: 30px; font-weight: bold; color: #ffcc00; margin: 10px 0; }
+        .section-title { text-align: left; width: 100%; margin: 20px 0 10px 10px; font-size: 18px; color: #aaa; }
+        .btn { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn-ad { background: #ffcc00; color: #000; }
+        .task-card { background: #2d333b; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .task-info { text-align: left; }
+        .task-reward { color: #4cd964; font-size: 14px; }
+        .btn-task { background: #0088cc; color: #fff; width: auto; padding: 8px 15px; font-size: 14px; }
+        .btn-withdraw { background: #eb4034; color: white; opacity: 0.5; }
+        .btn-withdraw.active { opacity: 1; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="balance-title">💰 Current Balance</div>
-        <div id="balance" class="balance-value">0.00</div>
-
+        <div style="font-size: 14px; color: #aaa;">Current Balance</div>
+        <div id="balance" class="balance-value">0.0000</div>
         <button id="adBtn" class="btn btn-ad">Watch Ad for Reward 📺</button>
-        <button class="btn btn-withdraw">Withdraw 💸</button>
+    </div>
+
+    <div class="section-title">Available Tasks</div>
+    <div class="container">
+        <div class="task-card">
+            <div class="task-info">
+                <div>Follow Channel</div>
+                <div class="task-reward">+0.0012 USD</div>
+            </div>
+            <button onclick="doTask('https://t.me/YOUR_CHANNEL', 0.0012)" class="btn btn-task">Join</button>
+        </div>
+    </div>
+
+    <div class="section-title">Withdrawal</div>
+    <div class="container">
+        <p style="font-size: 12px; color: #aaa;">Minimum withdraw: $2.00</p>
+        <button id="withdrawBtn" onclick="checkWithdraw()" class="btn btn-withdraw">Withdraw 💸</button>
     </div>
 
     <script>
-        // إعداد إعلانات Onclicka بالرقم الخاص بك
-        const adConfig = {
-            zoneId: 436685
-        };
+        let balance = parseFloat(localStorage.getItem('userBalance')) || 0;
+        const withdrawLimit = 2.0;
+        updateUI();
 
-        // تفعيل زر الإعلانات
+        // إعداد الإعلانات
+        const adConfig = { zoneId: 436685 };
+
         document.getElementById('adBtn').onclick = function() {
             if (window.onclicka) {
                 window.onclicka('show', adConfig);
@@ -82,11 +62,44 @@
             }
         };
 
-        // وظيفة افتراضية لزيادة الرصيد (للتوضيح فقط)
         window.onclicka('onAdCompleted', () => {
-            let currentBal = parseFloat(document.getElementById('balance').innerText);
-            document.getElementById('balance').innerText = (currentBal + 0.01).toFixed(2);
+            addMoney(0.001); // مكافأة الإعلان
         });
+
+        // وظيفة تنفيذ المهام
+        function doTask(url, reward) {
+            window.open(url, '_blank');
+            // ملاحظة: تليجرام ويب لا يمكنه التأكد 100% من الانضمام برمجياً بدون بوت خلفي (Backend)
+            // لكن سنضيف المبلغ بعد الضغط كتحفيز للمستخدم
+            setTimeout(() => {
+                addMoney(reward);
+                alert("Task completed! Reward added.");
+            }, 2000);
+        }
+
+        function addMoney(amount) {
+            balance += amount;
+            localStorage.setItem('userBalance', balance);
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('balance').innerText = balance.toFixed(4);
+            const wBtn = document.getElementById('withdrawBtn');
+            if (balance >= withdrawLimit) {
+                wBtn.classList.add('active');
+                wBtn.style.opacity = "1";
+            }
+        }
+
+        function checkWithdraw() {
+            if (balance < withdrawLimit) {
+                alert("عذراً، يجب أن يصل رصيدك إلى 2 دولار للسحب.");
+            } else {
+                alert("سيتم نقلك لصفحة السحب...");
+                // هنا تضع رابط صفحة السحب الخاصة بك
+            }
+        }
     </script>
 </body>
 </html>
