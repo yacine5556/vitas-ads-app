@@ -22,21 +22,21 @@
 <body>
 
     <div class="card">
-        <div style="font-size: 14px; color: #aaa; margin-bottom: 5px;">رصيدك الحالي</div>
+        <div style="font-size: 14px; color: #aaa; margin-bottom: 5px;">رصيدك الحالي (بالدولار)</div>
         <div id="balance" class="balance-amount">0.0000</div>
         <button id="adBtn" class="main-btn">كسب المال من الإعلانات 📺</button>
     </div>
 
     <div style="width: 100%; max-width: 400px; text-align: right; margin-bottom: 8px; color: #8b949e; font-size: 14px;">ضاعف أرباحك</div>
     <div class="card" style="padding: 15px;">
-        <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">شارك البوت مع أصدقائك واربح عمولة!</p>
+        <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">شارك الرابط مع أصدقائك لزيادة رصيدك!</p>
         <button onclick="inviteFriends()" class="main-btn invite-btn">ارسل رابط الدعوة لأصدقائك 🔗</button>
     </div>
 
     <div style="width: 100%; max-width: 400px; text-align: right; margin-bottom: 8px; color: #8b949e; font-size: 14px;">المهام السريعة</div>
     <div class="task-box">
         <div style="text-align: right;">
-            <div style="font-weight: bold; font-size: 14px;">متابعة قناتنا</div>
+            <div style="font-weight: bold; font-size: 14px;">متابعة قناة التليجرام</div>
             <div style="color: var(--green); font-size: 12px;">+0.0012$ كاش</div>
         </div>
         <button onclick="doTask()" class="small-btn">انضمام</button>
@@ -55,12 +55,11 @@
 
         const adConfig = { zoneId: 436685 };
 
-        // --- تم تعديل الرابط ليكون لبوتك Vitas_Ads_Bot حصراً ---
         function inviteFriends() {
-            // هذا هو الرابط الصحيح لبوتك
-            const botLink = 'https://t.me/Vitas_Ads_Bot'; 
-            const text = 'جرب هذا البوت الرائع لربح المال من مشاهدة الإعلانات! 💰📺';
-            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(botLink)}&text=${encodeURIComponent(text)}`;
+            // سنشارك رابط الموقع مباشرة لتجنب أخطاء معرف البوت
+            const myUrl = 'https://vitas-ads-app.vercel.app/'; 
+            const text = 'ادخل جرب هذا البوت المذهل لربح المال من مشاهدة الإعلانات! 💰';
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(myUrl)}&text=${encodeURIComponent(text)}`;
             
             window.location.href = shareUrl;
         }
@@ -69,7 +68,7 @@
             if (window.onclicka) {
                 window.onclicka('show', adConfig);
             } else {
-                alert("الإعلانات قيد التحضير، يرجى الانتظار.");
+                alert("الإعلانات قيد التحضير، يرجى المحاولة لاحقاً.");
             }
         };
 
@@ -84,7 +83,7 @@
                 if(!localStorage.getItem('channel_task_done')) {
                     addBalance(0.0012);
                     localStorage.setItem('channel_task_done', 'true');
-                    alert("تمت المهمة بنجاح!");
+                    alert("تمت المهمة بنجاح! تم إضافة المكافأة.");
                 } else {
                     alert("لقد قمت بهذه المهمة مسبقاً.");
                 }
@@ -108,7 +107,7 @@
 
         function checkWithdraw() {
             if (balance < targetWithdraw) {
-                alert("تحتاج لجمع 2 دولار للسحب.");
+                alert("تحتاج لجمع 2 دولار لفتح ميزة السحب.");
             } else {
                 alert("تم إرسال طلب السحب للمراجعة.");
             }
