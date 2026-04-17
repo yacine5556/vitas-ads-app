@@ -1,28 +1,139 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Gold</title>
-    <script async data-ad-id="436907" src="https://cdn.onclicka.com/script.js"></script>
+    <title>Vitas Gold - Earning Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f3f7f5; font-family: 'Segoe UI', sans-serif; }
+        .nav-item.active { color: #15803d; border-top: 3px solid #15803d; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .card { background: white; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    </style>
 </head>
-<body style="background-color: #121212; color: #ffcc00; text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px;">
+<body class="pb-24">
 
-    <div style="margin-top: 50px;">
-        <h1 style="font-size: 28px;">Vitas Gold 🪙</h1>
-        <p style="color: #ffffff;">نظام الأرباح جاهز الآن</p>
-        
-        <button onclick="showAds()" style="background: linear-gradient(45deg, #ffcc00, #ff9900); color: #000; border: none; padding: 15px 40px; font-size: 20px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3); margin-top: 30px;">
-            اضغط للربح (Profit)
+    <header class="bg-white p-4 flex justify-between items-center border-b sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-green-700 rounded-full flex items-center justify-center text-white font-bold">VG</div>
+            <h1 class="text-sm font-bold">Vitas Gold</h1>
+        </div>
+        <div class="text-left bg-green-50 px-3 py-1 rounded-full border border-green-100">
+            <span class="text-xs font-bold text-green-700" id="header-balance">0.000</span> <span class="text-[10px] text-green-600">TON</span>
+        </div>
+    </header>
+
+    <main class="p-4">
+
+        <div id="earn" class="page active">
+            <h2 class="text-lg font-bold mb-4">المهام المتاحة</h2>
+            <div class="space-y-4">
+                <div class="card p-4 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-blue-50 rounded-lg">📢</div>
+                        <div>
+                            <p class="text-sm font-bold">الانضمام إلى قناة TG</p>
+                            <p class="text-[10px] text-green-600">+0.001 TON</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="https://t.me/your_channel" target="_blank" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-bold">انضم</a>
+                        <button onclick="verifyTask(0.001, this)" class="bg-green-700 text-white px-3 py-1 rounded-full text-xs font-bold">تحقق</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="refer" class="page text-center">
+            <h2 class="text-lg font-bold mb-6 text-right">نظام الإحالة</h2>
+            <div class="card p-8">
+                <div class="text-5xl mb-4">👥</div>
+                <h3 class="font-bold mb-2">ادعُ أصدقاءك</h3>
+                <p class="text-xs text-gray-400 mb-6">سوف تحصل على مكافأة فورية عند انضمام صديق عبر رابطك.</p>
+                <div class="bg-gray-50 p-3 rounded-xl border border-dashed border-gray-300 mb-4 select-all text-xs">
+                    https://t.me/VitasGoldBot?start=user123
+                </div>
+                <button class="w-full bg-green-700 text-white py-3 rounded-xl font-bold">نسخ الرابط</button>
+            </div>
+        </div>
+
+        <div id="withdraw" class="page">
+            <h2 class="text-lg font-bold mb-4">سحب الأرباح</h2>
+            <div class="card p-6 text-center">
+                <p class="text-xs text-gray-400 mb-2">الرصيد القابل للسحب</p>
+                <h3 class="text-3xl font-bold text-gray-800 mb-6"><span id="withdraw-balance">0.000</span> TON</h3>
+                
+                <div class="text-right mb-6">
+                    <label class="text-[10px] text-gray-400 mb-1 block">عنوان المحفظة (TON)</label>
+                    <input type="text" id="wallet-addr" placeholder="أدخل عنوان محفظتك هنا" class="w-full p-3 bg-gray-50 border rounded-xl text-sm outline-none focus:border-green-500">
+                </div>
+
+                <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100 mb-6">
+                    <p class="text-[10px] text-yellow-700">الحد الأدنى للسحب هو <b>0.22 TON</b></p>
+                </div>
+
+                <button onclick="requestWithdraw()" id="btn-withdraw" class="w-full bg-gray-300 text-gray-500 py-4 rounded-2xl font-bold">طلب سحب</button>
+            </div>
+        </div>
+
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-2">
+        <button onclick="showPage('earn', this)" class="nav-item active flex flex-col items-center gap-1 w-full">
+            <span class="text-xl">💰</span><span class="text-[10px]">كسب</span>
         </button>
-    </div>
+        <button onclick="showPage('refer', this)" class="nav-item flex flex-col items-center gap-1 w-full">
+            <span class="text-xl">👥</span><span class="text-[10px]">إحالة</span>
+        </button>
+        <button onclick="showPage('withdraw', this)" class="nav-item flex flex-col items-center gap-1 w-full">
+            <span class="text-xl">💧</span><span class="text-[10px]">سحب</span>
+        </button>
+    </nav>
 
     <script>
-        function showAds() {
-            if (typeof onclicka !== 'undefined') {
-                onclicka.show();
+        let balance = 0.000;
+        const minWithdraw = 0.22; // الحد الأدنى الذي طلبته
+
+        function showPage(pageId, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function verifyTask(reward, btn) {
+            // إضافة الرصيد وتحديث الواجهة
+            balance += reward;
+            updateUI();
+            
+            // تعطيل الزر بعد الضغط
+            btn.disabled = true;
+            btn.innerText = "اكتمل ✅";
+            btn.classList.replace('bg-green-700', 'bg-gray-400');
+        }
+
+        function updateUI() {
+            document.getElementById('header-balance').innerText = balance.toFixed(3);
+            document.getElementById('withdraw-balance').innerText = balance.toFixed(3);
+            
+            // تفعيل زر السحب إذا وصل للحد الأدنى
+            if (balance >= minWithdraw) {
+                const btn = document.getElementById('btn-withdraw');
+                btn.classList.replace('bg-gray-300', 'bg-green-700');
+                btn.classList.replace('text-gray-500', 'text-white');
+            }
+        }
+
+        function requestWithdraw() {
+            const wallet = document.getElementById('wallet-addr').value;
+            if (balance < minWithdraw) {
+                alert("لم تصل للحد الأدنى للسحب بعد (0.22 TON)");
+            } else if (!wallet) {
+                alert("يرجى إدخال عنوان المحفظة أولاً");
             } else {
-                alert("جاري تحميل الإعلانات.. حاول مجدداً خلال ثوانٍ");
+                alert("تم استلام طلب السحب بنجاح إلى محفظة: " + wallet);
             }
         }
     </script>
