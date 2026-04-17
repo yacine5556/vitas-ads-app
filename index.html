@@ -3,29 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Gold Bot</title>
-    
+    <title>Vitas Gold</title>
     <script async data-ad-id="436907" src="https://cdn.onclicka.com/script.js"></script>
 </head>
-<body style="background-color: #000; color: #fff; text-align: center; font-family: Arial, sans-serif; padding-top: 50px;">
+<body style="background-color: #121212; color: #ffcc00; text-align: center; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px;">
 
-    <h2>Vitas Gold Bot</h2>
-    <p>اضغط على الزر أدناه لمشاهدة الإعلان وجني الأرباح</p>
-
-    <button onclick="showAd()" style="background-color: #ffcc00; color: #000; border: none; padding: 15px 30px; font-size: 18px; font-weight: bold; border-radius: 10px; cursor: pointer;">
-        الربح (Profit)
-    </button>
+    <div style="margin-top: 50px;">
+        <h1 style="font-size: 28px;">Vitas Gold 🪙</h1>
+        <p style="color: #ffffff;">نظام الأرباح جاهز الآن</p>
+        
+        <button onclick="showAds()" style="background: linear-gradient(45deg, #ffcc00, #ff9900); color: #000; border: none; padding: 15px 40px; font-size: 20px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3); margin-top: 30px;">
+            اضغط للربح (Profit)
+        </button>
+    </div>
 
     <script>
-        function showAd() {
-            // هذا الكود يستدعي الإعلان عند الضغط على الزر
+        function showAds() {
             if (typeof onclicka !== 'undefined') {
                 onclicka.show();
             } else {
-                alert("نظام الأرباح قيد التحميل.. انتظر ثواني وحاول مجدداً");
+                alert("جاري تحميل الإعلانات.. حاول مجدداً خلال ثوانٍ");
             }
         }
     </script>
-
 </body>
 </html>
