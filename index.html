@@ -3,109 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Earn Bot</title>
+    <title>Vitas Ads New</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://static.onclicka.com/js/onclicka.js"></script>
     <style>
-        :root { --primary: #ffcc00; --bg: #0b0e11; --card: #1c2128; --text: #ffffff; --green: #4cd964; }
-        body { background-color: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .card { background: var(--card); border-radius: 18px; padding: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        :root { --primary: #ffcc00; --bg: #0b0e11; --card: #1c2128; --text: #ffffff; }
+        body { background-color: var(--bg); color: var(--text); font-family: sans-serif; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .card { background: var(--card); border-radius: 18px; padding: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; margin-bottom: 15px; }
         .balance-amount { font-size: 38px; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
         .main-btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; }
         .invite-btn { background: #ffffff; color: #000; margin-top: 10px; }
-        .task-box { background: #2d333b; border-radius: 14px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 100%; max-width: 400px; border: 1px solid #444c56; box-sizing: border-box; }
-        .small-btn { background: #0088cc; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 13px; font-weight: bold; }
-        .withdraw-btn { background: #30363d; color: #8b949e; cursor: not-allowed; }
-        .withdraw-btn.active { background: var(--green); color: white; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <div style="font-size: 14px; color: #aaa; margin-bottom: 5px;">رصيدك الحالي (بالدولار)</div>
+        <div style="font-size: 14px; color: #aaa;">رصيدك الحالي</div>
         <div id="balance" class="balance-amount">0.0000</div>
         <button id="adBtn" class="main-btn">شاهد إعلان واربح 📺</button>
     </div>
 
-    <div style="width: 100%; max-width: 400px; text-align: right; margin-bottom: 8px; color: #8b949e; font-size: 14px;">نظام الإحالة</div>
-    <div class="card" style="padding: 15px;">
-        <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">اربح عن كل صديق يدخل البوت من خلالك!</p>
-        <button onclick="inviteFriends()" class="main-btn invite-btn">دعوة الأصدقاء 🔗</button>
-    </div>
-
-    <div style="width: 100%; max-width: 400px; text-align: right; margin-bottom: 8px; color: #8b949e; font-size: 14px;">المهام</div>
-    <div class="task-box">
-        <div style="text-align: right;">
-            <div style="font-weight: bold; font-size: 14px;">متابعة قناتنا الرسمية</div>
-            <div style="color: var(--green); font-size: 12px;">+0.0012$ كاش</div>
-        </div>
-        <button onclick="doTask()" class="small-btn">انضمام</button>
-    </div>
-
     <div class="card">
-        <p style="font-size: 12px; color: #8b949e; margin-bottom: 10px;">الحد الأدنى للسحب هو 2.00$</p>
-        <button id="withdrawBtn" onclick="checkWithdraw()" class="main-btn withdraw-btn">سحب الأرباح 💸</button>
+        <p style="font-size: 14px;">نظام الإحالة المباشر</p>
+        <button onclick="forceInvite()" class="main-btn invite-btn">ارسل الرابط لأصدقائك 🔗</button>
     </div>
 
     <script>
         let balance = parseFloat(localStorage.getItem('vitas_user_balance')) || 0;
-        const targetWithdraw = 2.00;
-        updateUI();
+        document.getElementById('balance').innerText = balance.toFixed(4);
 
-        const adConfig = { zoneId: 436685 };
-
-        // وظيفة الدعوة باستخدام المعرف الصحيح
-        function inviteFriends() {
-            const botUser = 'VitasEarnAds_bot';
-            const shareText = encodeURIComponent('جرب هذا البوت المذهل لربح المال من مشاهدة الإعلانات! 💰📺');
-            const shareUrl = `https://t.me/share/url?url=https://t.me/${botUser}&text=${shareText}`;
-            window.location.href = shareUrl;
+        // هذه الوظيفة تم تغيير اسمها لإجبار النظام على التحديث
+        function forceInvite() {
+            // رابط بوتك الحقيقي من BotFather
+            const myBotLink = "https://t.me/VitasEarnAds_bot";
+            const message = encodeURIComponent(" Try the Vitas bot to earn money ! 💰");
+            
+            // الرابط النهائي المدمج
+            const finalUrl = "https://t.me/share/url?url=" + myBotLink + "&text=" + message;
+            
+            window.location.href = finalUrl;
         }
 
         document.getElementById('adBtn').onclick = function() {
-            if (window.onclicka) {
-                window.onclicka('show', adConfig);
-            } else {
-                alert("جاري تجهيز الإعلان...");
-            }
+            if (window.onclicka) { window.onclicka('show', { zoneId: 436685 }); }
+            else { alert("جاري التحميل..."); }
         };
 
         window.onclicka('onAdCompleted', () => {
-            addBalance(0.0010);
-        });
-
-        function doTask() {
-            window.open('https://t.me/fotgy', '_blank');
-            setTimeout(() => {
-                if(!localStorage.getItem('task_done_v1')) {
-                    addBalance(0.0012);
-                    localStorage.setItem('task_done_v1', 'true');
-                    alert("تمت إضافة المكافأة!");
-                }
-            }, 2000);
-        }
-
-        function addBalance(amount) {
-            balance += amount;
+            balance += 0.0010;
             localStorage.setItem('vitas_user_balance', balance);
-            updateUI();
-        }
-
-        function updateUI() {
             document.getElementById('balance').innerText = balance.toFixed(4);
-            const wBtn = document.getElementById('withdrawBtn');
-            if (balance >= targetWithdraw) {
-                wBtn.classList.add('active');
-            }
-        }
-
-        function checkWithdraw() {
-            if (balance < targetWithdraw) {
-                alert("تحتاج لجمع 2 دولار للسحب.");
-            } else {
-                alert("تم استلام الطلب.");
-            }
-        }
+        });
     </script>
 </body>
 </html>
