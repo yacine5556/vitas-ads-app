@@ -59,9 +59,28 @@
             <div class="card p-6 text-center">
                 <img src="https://i.ibb.co/Lz7f0mX/gold-coins.jpg" class="w-24 h-24 mx-auto mb-4 rounded-full shadow-lg">
                 <h3 class="font-bold text-gray-800 mb-2 text-sm">ادعُ أصدقاءك واربح 💎</h3>
-                <p class="text-[10px] text-gray-400 mb-6">ستحصل على 0.07 TON عن كل إحالة ناجحة.</p>
-                <input type="text" id="ref-url" readonly value="https://t.me/VitasGold_bot?start=user" class="w-full p-3 bg-gray-50 border border-dashed rounded-xl text-[10px] text-center mb-4">
+                <p class="text-[10px] text-gray-400 mb-6 px-4">ستحصل على **0.07 TON** عن كل صديق ينضم عبر رابطك.</p>
+                <input type="text" id="ref-url" readonly value="https://t.me/VitasGold_bot?start=user" class="w-full p-3 bg-gray-50 border border-dashed rounded-xl text-[10px] text-center mb-4 outline-none">
                 <button onclick="copyRefLink()" class="w-full bg-green-800 text-white py-4 rounded-2xl font-bold text-sm">نسخ الرابط</button>
+            </div>
+        </div>
+
+        <div id="ads" class="page">
+            <h2 class="text-lg font-bold mb-4 text-blue-900 text-center">ترويج القنوات</h2>
+            <div class="card p-6">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-2">🚀</div>
+                    <h3 class="font-bold text-gray-800 text-sm">هل تملك قناة تليجرام؟</h3>
+                    <p class="text-[10px] text-gray-500">أعلن لدينا واجعل قناتك تصل لآلاف المشتركين الحقيقيين.</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-2xl mb-6">
+                    <p class="text-[11px] text-blue-800 leading-relaxed">
+                        • وصول سريع لمستخدمي TON.<br>
+                        • مشتركين حقيقيين من البوت مباشرة.<br>
+                        • أسعار تنافسية ودعم فني مستمر.
+                    </p>
+                </div>
+                <a href="https://t.me/HELLAL1995" target="_blank" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold text-sm block text-center shadow-lg active:bg-blue-700 transition-all">تواصل مع الإدارة للإعلان</a>
             </div>
         </div>
 
@@ -70,9 +89,9 @@
             <div class="card p-6">
                 <p class="text-xs text-gray-400">الرصيد المتاح</p>
                 <h3 class="text-3xl font-bold text-green-800 my-6"><span id="withdraw-balance">0.000</span> TON</h3>
-                <input type="text" id="wallet" placeholder="عنوان محفظة TON" class="w-full p-3 bg-gray-50 rounded-xl text-xs mb-4 outline-none border border-gray-100">
+                <input type="text" id="wallet" placeholder="عنوان محفظة TON" class="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-xs mb-4 outline-none">
                 <p class="text-[10px] text-yellow-600 font-bold mb-4">الحد الأدنى للسحب: 0.22 TON</p>
-                <button onclick="withdraw()" id="btn-draw" class="w-full bg-gray-200 text-gray-400 py-4 rounded-2xl font-bold">طلب سحب</button>
+                <button onclick="withdraw()" id="btn-draw" class="w-full bg-gray-200 text-gray-400 py-4 rounded-2xl font-bold transition-all">Request Withdrawal</button>
             </div>
         </div>
 
@@ -81,15 +100,14 @@
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-2 shadow-2xl">
         <button onclick="nav('earn', this)" class="nav-item active flex flex-col items-center w-full py-2"><span class="text-xl">💰</span><span class="text-[10px]">Earn</span></button>
         <button onclick="nav('refer', this)" class="nav-item flex flex-col items-center w-full py-2"><span class="text-xl">👥</span><span class="text-[10px]">Refer</span></button>
+        <button onclick="nav('ads', this)" class="nav-item flex flex-col items-center w-full py-2"><span class="text-xl">🚀</span><span class="text-[10px]">Ads</span></button>
         <button onclick="nav('withdraw', this)" class="nav-item flex flex-col items-center w-full py-2"><span class="text-xl">💧</span><span class="text-[10px]">Withdraw</span></button>
     </nav>
 
     <script>
-        // نظام حفظ البيانات (LocalStorage)
         let balance = parseFloat(localStorage.getItem('vitas_balance')) || 0;
         let completedTasks = JSON.parse(localStorage.getItem('vitas_tasks')) || [];
 
-        // تحديث الواجهة عند الفتح
         window.onload = () => {
             updateUI();
             completedTasks.forEach(taskId => {
@@ -112,17 +130,11 @@
 
         function verifyTask(amt, taskId) {
             if (completedTasks.includes(taskId)) return;
-
             balance += amt;
             completedTasks.push(taskId);
-
-            // حفظ في ذاكرة الهاتف
             localStorage.setItem('vitas_balance', balance);
             localStorage.setItem('vitas_tasks', JSON.stringify(completedTasks));
-
             updateUI();
-            
-            // تحديث شكل المهمة فوراً
             const taskEl = document.getElementById(taskId);
             taskEl.classList.add('completed-task');
             const btn = taskEl.querySelector('button');
@@ -134,7 +146,8 @@
             document.getElementById('header-balance').innerText = balance.toFixed(3);
             document.getElementById('withdraw-balance').innerText = balance.toFixed(3);
             if(balance >= 0.22) {
-                document.getElementById('btn-draw').className = "w-full bg-green-700 text-white py-4 rounded-2xl font-bold shadow-lg";
+                const drawBtn = document.getElementById('btn-draw');
+                drawBtn.className = "w-full bg-green-700 text-white py-4 rounded-2xl font-bold shadow-lg";
             }
         }
 
