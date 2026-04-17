@@ -3,179 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Ads Pro</title>
+    <title>Vitas Ads Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://static.onclicka.com/js/onclicka.js"></script>
     <style>
-        :root { --primary: #ffcc00; --bg: #0b0e11; --card: #1c2128; --text: #ffffff; --green: #4cd964; --blue: #0088cc; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; user-select: none; }
+        :root { --primary: #ffcc00; --bg: #050505; --card: #151515; --text: #ffffff; --accent: #0088cc; --success: #4cd964; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
         
-        /* البطاقة الرئيسية */
-        .main-card { background: linear-gradient(145deg, #1c2128, #111418); border-radius: 24px; padding: 25px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .balance-title { font-size: 14px; color: #8b949e; margin-bottom: 5px; }
-        .balance-value { font-size: 42px; font-weight: 900; color: var(--primary); text-shadow: 0 0 15px rgba(255, 204, 0, 0.3); }
+        /* الهيدر المحترف */
+        .header { background: var(--card); padding: 20px; border-bottom: 1px solid #333; text-align: center; border-radius: 0 0 25px 25px; }
+        .user-info { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .user-id { font-size: 12px; color: #888; background: #222; padding: 4px 10px; border-radius: 20px; }
+        .balance-container { font-size: 45px; font-weight: bold; color: var(--primary); margin: 10px 0; }
+        
+        /* شريط التنقل السفلي */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; z-index: 100; }
+        .nav-item { text-align: center; font-size: 11px; color: #888; cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item span { display: block; font-size: 20px; margin-bottom: 3px; }
 
-        /* شريط التقدم للسحب */
-        .progress-container { width: 100%; background: #30363d; height: 8px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--green); width: 0%; transition: 0.5s; }
-        .progress-text { font-size: 11px; color: #8b949e; margin-top: -15px; display: block; }
+        /* الأقسام */
+        .section { padding: 20px; padding-bottom: 100px; display: none; width: 100%; box-sizing: border-box; }
+        .section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* الأزرار والمهام */
-        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; }
-        .action-card { background: var(--card); border-radius: 16px; padding: 15px; border: 1px solid #30363d; text-align: center; cursor: pointer; }
-        .action-card i { font-size: 24px; display: block; margin-bottom: 8px; }
+        /* البطاقات والمهام */
+        .card { background: var(--card); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid #222; }
+        .task-item { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 10px; }
+        .task-details { text-align: right; }
+        .task-reward { color: var(--success); font-weight: bold; font-size: 14px; }
         
-        .task-list { width: 100%; max-width: 400px; }
-        .task-item { background: #1c2128; border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid #30363d; }
-        .task-info { display: flex; flex-direction: column; text-align: right; }
-        .task-name { font-weight: bold; font-size: 15px; }
-        .task-reward { color: var(--green); font-size: 13px; font-weight: bold; }
-        
-        .btn-claim { background: var(--blue); color: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .btn-main { background: var(--primary); color: #000; border: none; padding: 18px; border-radius: 15px; font-size: 18px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
-        
-        .section-title { width: 100%; text-align: right; color: #8b949e; font-size: 14px; margin: 10px 0; font-weight: bold; }
+        .btn-action { background: var(--primary); color: #000; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .btn-main { background: linear-gradient(90deg, var(--primary), #e6b800); color: #000; width: 100%; padding: 18px; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; margin-top: 10px; box-shadow: 0 5px 15px rgba(255,204,0,0.2); }
     </style>
 </head>
 <body>
 
-    <div class="main-card">
-        <div class="balance-title">إجمالي أرباحك</div>
-        <div id="balance" class="balance-value">0.0000</div>
-        
-        <div class="progress-container">
-            <div id="progressBar" class="progress-bar"></div>
+    <div class="header">
+        <div class="user-info">
+            <span id="userName" style="font-weight: bold;">مرحباً بك</span>
+            <span id="userId" class="user-id">ID: 000000</span>
         </div>
-        <span class="progress-text" id="progressText">التقدم نحو السحب: 0%</span>
-        
-        <button id="adBtn" class="btn-main">كسب المال (شاهد إعلان) 📺</button>
+        <div class="balance-title" style="font-size: 14px; color: #888;">رصيدك المتوفر</div>
+        <div id="mainBalance" class="balance-container">0.0000</div>
+        <button id="adBtn" class="btn-main">كسب المال من الإعلان 📺</button>
     </div>
 
-    <div class="grid-buttons">
-        <div class="action-card" onclick="dailyCheckIn()">
-            <span>📅</span>
-            <div style="font-size: 14px; font-weight: bold;">تسجيل يومي</div>
-            <div id="dailyStatus" style="font-size: 10px; color: var(--green);">متاح الآن</div>
-        </div>
-        <div class="action-card" onclick="shareReferral()">
-            <span>🔗</span>
-            <div style="font-size: 14px; font-weight: bold;">إحالات</div>
-            <div style="font-size: 10px; color: #aaa;">شارك واربح</div>
-        </div>
-    </div>
-
-    <div class="section-title">المهام الاجتماعية</div>
-    <div class="task-list">
-        <div class="task-item">
-            <div class="task-info">
-                <span class="task-name">متابعة قناة التليجرام</span>
-                <span class="task-reward">+0.0050$</span>
+    <div id="earnings" class="section active">
+        <h3 style="text-align: right;">المهام اليومية</h3>
+        <div class="card" onclick="dailyCheckIn()">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="text-align: right;">
+                    <strong>التسجيل اليومي</strong>
+                    <div style="font-size: 12px; color: #888;">احصل على مكافأة كل 24 ساعة</div>
+                </div>
+                <span style="font-size: 24px;">📅</span>
             </div>
-            <button onclick="doTask('https://t.me/fotgy', 0.0050)" class="btn-claim">انضمام</button>
+        </div>
+
+        <h3 style="text-align: right;">مهام القنوات</h3>
+        <div class="task-item">
+            <div class="task-details">
+                <div>انضم لقناتنا الرسمية</div>
+                <div class="task-reward">+0.0050$</div>
+            </div>
+            <button onclick="doTask('https://t.me/fotgy', 0.0050)" class="btn-action">انضمام</button>
         </div>
     </div>
 
-    <div class="section-title">السحب</div>
-    <div class="task-item" style="border-color: var(--green);">
-        <div class="task-info">
-            <span class="task-name">طلب سحب الأرباح</span>
-            <span style="font-size: 11px; color: #8b949e;">الحد الأدنى 2.00$</span>
+    <div id="friends" class="section">
+        <h2 style="text-align: center;">نظام الإحالة</h2>
+        <div class="card" style="text-align: center;">
+            <p>اربح 0.01$ عن كل صديق جديد يدخل البوت من خلال رابطك!</p>
+            <button onclick="shareInvite()" class="btn-main" style="background: var(--accent); color: white;">دعوة الأصدقاء 🔗</button>
         </div>
-        <button onclick="withdraw()" id="withdrawBtn" class="btn-claim" style="background: #30363d; cursor: not-allowed;">سحب</button>
+        <div class="card">
+            <div style="display: flex; justify-content: space-between;">
+                <span>إجمالي الإحالات:</span>
+                <span id="refCount">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="withdraw" class="section">
+        <h2 style="text-align: center;">سحب الأرباح</h2>
+        <div class="card">
+            <p style="text-align: center; color: #888;">الحد الأدنى للسحب هو 2.00$</p>
+            <div id="progress" style="width: 100%; background: #222; height: 10px; border-radius: 5px; margin: 15px 0;">
+                <div id="bar" style="width: 0%; background: var(--success); height: 100%; border-radius: 5px; transition: 0.5s;"></div>
+            </div>
+            <button onclick="requestWithdraw()" id="wdBtn" class="btn-main" style="background: #333; cursor: not-allowed; color: #888;">اطلب السحب</button>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="showSection('earnings', this)"><span>💰</span>الأرباح</div>
+        <div class="nav-item" onclick="showSection('friends', this)"><span>👥</span>الإحالات</div>
+        <div class="nav-item" onclick="showSection('withdraw', this)"><span>💳</span>السحب</div>
     </div>
 
     <script>
         const tele = window.Telegram.WebApp;
         tele.expand();
-
-        let balance = parseFloat(localStorage.getItem('vitas_balance')) || 0;
-        const withdrawLimit = 2.00;
+        
+        let balance = parseFloat(localStorage.getItem('vitas_pro_bal')) || 0;
+        let refCount = parseInt(localStorage.getItem('vitas_pro_ref')) || 0;
+        const userId = tele.initDataUnsafe?.user?.id || "668822";
+        const userName = tele.initDataUnsafe?.user?.first_name || "مستخدم";
 
         function updateUI() {
-            document.getElementById('balance').innerText = balance.toFixed(4);
+            document.getElementById('mainBalance').innerText = balance.toFixed(4);
+            document.getElementById('userName').innerText = "مرحباً، " + userName;
+            document.getElementById('userId').innerText = "ID: " + userId;
+            document.getElementById('refCount').innerText = refCount;
             
-            // تحديث شريط التقدم
-            let percent = (balance / withdrawLimit) * 100;
-            if (percent > 100) percent = 100;
-            document.getElementById('progressBar').style.width = percent + "%";
-            document.getElementById('progressText').innerText = `التقدم نحو السحب: ${percent.toFixed(1)}%`;
-
-            // تفعيل زر السحب
-            const wBtn = document.getElementById('withdrawBtn');
-            if (balance >= withdrawLimit) {
-                wBtn.style.background = "var(--green)";
-                wBtn.style.cursor = "pointer";
-                wBtn.innerText = "اسحب الآن";
+            // تحديث شريط السحب
+            let p = (balance / 2) * 100;
+            if (p > 100) p = 100;
+            document.getElementById('bar').style.width = p + "%";
+            
+            if (balance >= 2) {
+                const btn = document.getElementById('wdBtn');
+                btn.style.background = "var(--success)";
+                btn.style.color = "white";
+                btn.style.cursor = "pointer";
+                btn.innerText = "اسحب الآن";
             }
         }
-
         updateUI();
 
-        // 1. التسجيل اليومي
-        function dailyCheckIn() {
-            const lastDate = localStorage.getItem('last_checkin');
-            const today = new Date().toDateString();
-
-            if (lastDate === today) {
-                alert("لقد قمت بالتسجيل اليوم، عد غداً! ✨");
-            } else {
-                balance += 0.0020;
-                localStorage.setItem('last_checkin', today);
-                localStorage.setItem('vitas_balance', balance);
-                updateUI();
-                alert("مبروك! حصلت على مكافأة اليوم 0.0020$ 🎁");
-                document.getElementById('dailyStatus').innerText = "تم التسجيل";
-            }
+        function showSection(id, el) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
         }
 
-        // 2. مشاهدة الإعلانات
-        document.getElementById('adBtn').onclick = function() {
-            if (window.onclicka) {
-                window.onclicka('show', { zoneId: 436685 });
-            } else {
-                alert("جاري الاتصال...");
-            }
+        // إعلانات
+        document.getElementById('adBtn').onclick = () => {
+            if (window.onclicka) { window.onclicka('show', { zoneId: 436685 }); }
+            else { alert("جاري التحميل..."); }
         };
-
         window.onclicka('onAdCompleted', () => {
-            balance += 0.0010;
-            localStorage.setItem('vitas_balance', balance);
-            updateUI();
+            addBalance(0.0015);
             tele.HapticFeedback.notificationOccurred('success');
         });
 
-        // 3. المهام
-        function doTask(link, reward) {
-            window.open(link, '_blank');
+        // مهام
+        function dailyCheckIn() {
+            const last = localStorage.getItem('last_v_check');
+            const now = new Date().toDateString();
+            if (last === now) return alert("عد غداً للمطالبة!");
+            addBalance(0.0020);
+            localStorage.setItem('last_v_check', now);
+            alert("تم استلام مكافأة اليوم!");
+        }
+
+        function doTask(url, reward) {
+            window.open(url, '_blank');
             setTimeout(() => {
-                if(!localStorage.getItem(link)) {
-                    balance += reward;
-                    localStorage.setItem('vitas_balance', balance);
-                    localStorage.setItem(link, 'true');
-                    updateUI();
-                    alert("تم إضافة المكافأة! ✅");
-                } else {
-                    alert("تم إكمال هذه المهمة سابقاً.");
+                if(!localStorage.getItem(url)) {
+                    addBalance(reward);
+                    localStorage.setItem(url, 'true');
+                    alert("تم إكمال المهمة! ✅");
                 }
             }, 3000);
         }
 
-        // 4. الإحالات
-        function shareReferral() {
-            const userId = tele.initDataUnsafe?.user?.id || "user";
-            const botUser = "VitasEarnAds_bot";
-            const refLink = `https://t.me/${botUser}?start=${userId}`;
-            const text = encodeURIComponent("اكسب الدولارات يومياً من هذا البوت الموثوق! جربه الآن 💰");
-            window.location.href = `https://t.me/share/url?url=${refLink}&text=${text}`;
+        function shareInvite() {
+            const link = `https://t.me/VitasEarnAds_bot?start=${userId}`;
+            const text = encodeURIComponent("اكسب الدولارات يومياً من هذا البوت الموثوق! 💰");
+            window.location.href = `https://t.me/share/url?url=${link}&text=${text}`;
         }
 
-        // 5. السحب
-        function withdraw() {
-            if (balance < withdrawLimit) {
-                alert("رصيدك لم يصل للحد الأدنى (2.00$)");
-            } else {
-                alert("تم إرسال طلب السحب للإدارة! سيتم التواصل معك عبر المعرف الخاص بك.");
-            }
+        function addBalance(amt) {
+            balance += amt;
+            localStorage.setItem('vitas_pro_bal', balance);
+            updateUI();
+        }
+
+        function requestWithdraw() {
+            if(balance < 2) return alert("لم تصل للحد الأدنى.");
+            alert("تم إرسال طلبك للإدارة للمراجعة.");
         }
     </script>
 </body>
