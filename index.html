@@ -3,188 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Ads Premium</title>
+    <title>Vitas Ads Bot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://static.onclicka.com/js/onclicka.js"></script>
     <style>
-        :root { --primary: #ffcc00; --bg: #050505; --card: #151515; --text: #ffffff; --accent: #0088cc; --success: #4cd964; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
-        
-        /* الهيدر المحترف */
-        .header { background: var(--card); padding: 20px; border-bottom: 1px solid #333; text-align: center; border-radius: 0 0 25px 25px; }
-        .user-info { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
-        .user-id { font-size: 12px; color: #888; background: #222; padding: 4px 10px; border-radius: 20px; }
-        .balance-container { font-size: 45px; font-weight: bold; color: var(--primary); margin: 10px 0; }
-        
-        /* شريط التنقل السفلي */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; z-index: 100; }
-        .nav-item { text-align: center; font-size: 11px; color: #888; cursor: pointer; flex: 1; }
+        :root { --primary: #ffcc00; --bg: #0b0e11; --card: #1c2128; --text: #ffffff; }
+        body { background-color: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
+        .header { background: var(--card); padding: 30px 20px; text-align: center; border-radius: 0 0 30px 30px; border-bottom: 2px solid var(--primary); }
+        .balance { font-size: 50px; font-weight: bold; color: var(--primary); margin: 10px 0; }
+        .main-btn { background: var(--primary); color: #000; border: none; padding: 20px; border-radius: 15px; font-size: 18px; font-weight: bold; width: 90%; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3); }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; }
+        .nav-item { text-align: center; font-size: 12px; color: #888; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--primary); }
-        .nav-item span { display: block; font-size: 20px; margin-bottom: 3px; }
-
-        /* الأقسام */
-        .section { padding: 20px; padding-bottom: 100px; display: none; width: 100%; box-sizing: border-box; }
-        .section.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* البطاقات والمهام */
-        .card { background: var(--card); border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 1px solid #222; }
-        .task-item { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 15px; border-radius: 15px; margin-bottom: 10px; }
-        .task-details { text-align: right; }
-        .task-reward { color: var(--success); font-weight: bold; font-size: 14px; }
-        
-        .btn-action { background: var(--primary); color: #000; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .btn-main { background: linear-gradient(90deg, var(--primary), #e6b800); color: #000; width: 100%; padding: 18px; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; margin-top: 10px; box-shadow: 0 5px 15px rgba(255,204,0,0.2); }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="user-info">
-            <span id="userName" style="font-weight: bold;">مرحباً بك</span>
-            <span id="userId" class="user-id">ID: 000000</span>
-        </div>
-        <div class="balance-title" style="font-size: 14px; color: #888;">رصيدك المتوفر</div>
-        <div id="mainBalance" class="balance-container">0.0000</div>
-        <button id="adBtn" class="btn-main">كسب المال من الإعلان 📺</button>
+        <div style="font-size: 14px; color: #888;">الرصيد الحالي</div>
+        <div id="balanceDisplay" class="balance">0.0000</div>
+        <button id="adBtn" class="main-btn">شاهد إعلان واربح 📺</button>
     </div>
 
-    <div id="earnings" class="section active">
-        <h3 style="text-align: right;">المهام اليومية</h3>
-        <div class="card" onclick="dailyCheckIn()">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="text-align: right;">
-                    <strong>التسجيل اليومي</strong>
-                    <div style="font-size: 12px; color: #888;">احصل على مكافأة كل 24 ساعة</div>
-                </div>
-                <span style="font-size: 24px;">📅</span>
-            </div>
-        </div>
-
-        <h3 style="text-align: right;">مهام القنوات</h3>
-        <div class="task-item">
-            <div class="task-details">
-                <div>انضم لقناتنا الرسمية</div>
-                <div class="task-reward">+0.0050$</div>
-            </div>
-            <button onclick="doTask('https://t.me/fotgy', 0.0050)" class="btn-action">انضمام</button>
-        </div>
-    </div>
-
-    <div id="friends" class="section">
-        <h2 style="text-align: center;">نظام الإحالة</h2>
-        <div class="card" style="text-align: center;">
-            <p>اربح 0.01$ عن كل صديق جديد يدخل البوت من خلال رابطك!</p>
-            <button onclick="shareInvite()" class="btn-main" style="background: var(--accent); color: white;">دعوة الأصدقاء 🔗</button>
-        </div>
-        <div class="card">
-            <div style="display: flex; justify-content: space-between;">
-                <span>إجمالي الإحالات:</span>
-                <span id="refCount">0</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="withdraw" class="section">
-        <h2 style="text-align: center;">سحب الأرباح</h2>
-        <div class="card">
-            <p style="text-align: center; color: #888;">الحد الأدنى للسحب هو 2.00$</p>
-            <div id="progress" style="width: 100%; background: #222; height: 10px; border-radius: 5px; margin: 15px 0;">
-                <div id="bar" style="width: 0%; background: var(--success); height: 100%; border-radius: 5px; transition: 0.5s;"></div>
-            </div>
-            <button onclick="requestWithdraw()" id="wdBtn" class="btn-main" style="background: #333; cursor: not-allowed; color: #888;">اطلب السحب</button>
+    <div style="padding: 20px; text-align: center;">
+        <div style="background: var(--card); padding: 15px; border-radius: 15px;">
+            <p>اربح عن طريق دعوة الأصدقاء</p>
+            <button onclick="shareLink()" style="background: #0088cc; color: white; border: none; padding: 10px 20px; border-radius: 10px;">دعوة 🔗</button>
         </div>
     </div>
 
     <div class="nav-bar">
-        <div class="nav-item active" onclick="showSection('earnings', this)"><span>💰</span>الأرباح</div>
-        <div class="nav-item" onclick="showSection('friends', this)"><span>👥</span>الإحالات</div>
-        <div class="nav-item" onclick="showSection('withdraw', this)"><span>💳</span>السحب</div>
+        <div class="nav-item active"><span>💰</span><br>الأرباح</div>
+        <div class="nav-item" onclick="shareLink()"><span>👥</span><br>الإحالات</div>
+        <div class="nav-item"><span>💳</span><br>السحب</div>
     </div>
 
     <script>
         const tele = window.Telegram.WebApp;
         tele.expand();
-        
-        let balance = parseFloat(localStorage.getItem('vitas_pro_bal')) || 0;
-        let refCount = parseInt(localStorage.getItem('vitas_pro_ref')) || 0;
-        const userId = tele.initDataUnsafe?.user?.id || "668822";
-        const userName = tele.initDataUnsafe?.user?.first_name || "مستخدم";
 
-        function updateUI() {
-            document.getElementById('mainBalance').innerText = balance.toFixed(4);
-            document.getElementById('userName').innerText = "مرحباً، " + userName;
-            document.getElementById('userId').innerText = "ID: " + userId;
-            document.getElementById('refCount').innerText = refCount;
-            
-            // تحديث شريط السحب
-            let p = (balance / 2) * 100;
-            if (p > 100) p = 100;
-            document.getElementById('bar').style.width = p + "%";
-            
-            if (balance >= 2) {
-                const btn = document.getElementById('wdBtn');
-                btn.style.background = "var(--success)";
-                btn.style.color = "white";
-                btn.style.cursor = "pointer";
-                btn.innerText = "اسحب الآن";
+        let balance = parseFloat(localStorage.getItem('vitas_balance')) || 0;
+        document.getElementById('balanceDisplay').innerText = balance.toFixed(4);
+
+        // استخدام الـ AD Code ID الجديد من صورتك الأخيرة
+        const myZoneId = 436888; 
+
+        document.getElementById('adBtn').onclick = function() {
+            if (typeof window.onclicka !== 'undefined') {
+                window.onclicka('show', { zoneId: myZoneId });
+            } else {
+                alert("جاري تحميل نظام الإعلانات... حاول مجدداً");
             }
-        }
-        updateUI();
-
-        function showSection(id, el) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
-        }
-
-        // إعلانات
-        document.getElementById('adBtn').onclick = () => {
-            if (window.onclicka) { window.onclicka('show', { zoneId: 436685 }); }
-            else { alert("جاري التحميل..."); }
         };
+
         window.onclicka('onAdCompleted', () => {
-            addBalance(0.0015);
+            balance += 0.0015;
+            localStorage.setItem('vitas_balance', balance);
+            document.getElementById('balanceDisplay').innerText = balance.toFixed(4);
             tele.HapticFeedback.notificationOccurred('success');
         });
 
-        // مهام
-        function dailyCheckIn() {
-            const last = localStorage.getItem('last_v_check');
-            const now = new Date().toDateString();
-            if (last === now) return alert("عد غداً للمطالبة!");
-            addBalance(0.0020);
-            localStorage.setItem('last_v_check', now);
-            alert("تم استلام مكافأة اليوم!");
-        }
-
-        function doTask(url, reward) {
-            window.open(url, '_blank');
-            setTimeout(() => {
-                if(!localStorage.getItem(url)) {
-                    addBalance(reward);
-                    localStorage.setItem(url, 'true');
-                    alert("تم إكمال المهمة! ✅");
-                }
-            }, 3000);
-        }
-
-        function shareInvite() {
-            const link = `https://t.me/VitasEarnAds_bot?start=${userId}`;
-            const text = encodeURIComponent("اكسب الدولارات يومياً من هذا البوت الموثوق! 💰");
-            window.location.href = `https://t.me/share/url?url=${link}&text=${text}`;
-        }
-
-        function addBalance(amt) {
-            balance += amt;
-            localStorage.setItem('vitas_pro_bal', balance);
-            updateUI();
-        }
-
-        function requestWithdraw() {
-            if(balance < 2) return alert("لم تصل للحد الأدنى.");
-            alert("تم إرسال طلبك للإدارة للمراجعة.");
+        function shareLink() {
+            const userId = tele.initDataUnsafe?.user?.id || "user";
+            const url = `https://t.me/VitasEarnAds_bot?start=${userId}`;
+            const text = encodeURIComponent("اكسب المال من هاتفك مجاناً! 💰");
+            window.location.href = `https://t.me/share/url?url=${url}&text=${text}`;
         }
     </script>
 </body>
