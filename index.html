@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Ads New</title>
+    <title>Vitas Ads - Referral System</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://static.onclicka.com/js/onclicka.js"></script>
     <style>
@@ -13,6 +13,7 @@
         .balance-amount { font-size: 38px; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
         .main-btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; }
         .invite-btn { background: #ffffff; color: #000; margin-top: 10px; }
+        .user-id-tag { font-size: 11px; color: #8b949e; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -24,35 +25,51 @@
     </div>
 
     <div class="card">
-        <p style="font-size: 14px;">نظام الإحالة المباشر</p>
-        <button onclick="forceInvite()" class="main-btn invite-btn">ارسل الرابط لأصدقائك 🔗</button>
+        <p style="font-size: 14px; font-weight: bold;">نظام الإحالة الفريد</p>
+        <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">كل شخص يدخل عبر رابطك سيزيد من أرباحك!</p>
+        <button onclick="shareReferral()" class="main-btn invite-btn">مشاركة رابط الإحالة الخاص بي 🔗</button>
+        <div id="userIdDisplay" class="user-id-tag"></div>
     </div>
 
     <script>
+        const tele = window.Telegram.WebApp;
+        tele.expand(); // لفتح التطبيق بكامل الشاشة
+
         let balance = parseFloat(localStorage.getItem('vitas_user_balance')) || 0;
         document.getElementById('balance').innerText = balance.toFixed(4);
 
-        // هذه الوظيفة تم تغيير اسمها لإجبار النظام على التحديث
-        function forceInvite() {
-            // رابط بوتك الحقيقي من BotFather
-            const myBotLink = "https://t.me/VitasEarnAds_bot";
-            const message = encodeURIComponent(" Try the Vitas bot to earn money ! 💰");
+        // الحصول على ID المستخدم من تليجرام
+        const userId = tele.initDataUnsafe?.user?.id || "guest";
+        if(userId !== "guest") {
+            document.getElementById('userIdDisplay').innerText = "معرف الإحالة الخاص بك: " + userId;
+        }
+
+        function shareReferral() {
+            const botUsername = "VitasEarnAds_bot";
             
-            // الرابط النهائي المدمج
-            const finalUrl = "https://t.me/share/url?url=" + myBotLink + "&text=" + message;
+            // إنشاء رابط إحالة يحتوي على ID المستخدم
+            // الرابط سيكون بهذا الشكل: https://t.me/VitasEarnAds_bot?start=12345678
+            const referralLink = `https://t.me/${botUsername}?start=${userId}`;
             
-            window.location.href = finalUrl;
+            const text = encodeURIComponent("ادخل جرب هذا البوت لربح المال من الإعلانات! السحب مضمون 💰📺");
+            const shareUrl = `https://t.me/share/url?url=${referralLink}&text=${text}`;
+            
+            window.location.href = shareUrl;
         }
 
         document.getElementById('adBtn').onclick = function() {
-            if (window.onclicka) { window.onclicka('show', { zoneId: 436685 }); }
-            else { alert("جاري التحميل..."); }
+            if (window.onclicka) { 
+                window.onclicka('show', { zoneId: 436685 }); 
+            } else { 
+                alert("جاري تجهيز الإعلان..."); 
+            }
         };
 
         window.onclicka('onAdCompleted', () => {
             balance += 0.0010;
             localStorage.setItem('vitas_user_balance', balance);
             document.getElementById('balance').innerText = balance.toFixed(4);
+            tele.HapticFeedback.notificationOccurred('success'); // اهتزاز خفيف عند الربح
         });
     </script>
 </body>
