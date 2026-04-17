@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Ads Bot</title>
+    <title>Vitas Earn Bot</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://static.onclicka.com/js/onclicka.js"></script>
     <style>
         :root { --primary: #ffcc00; --bg: #0b0e11; --card: #1c2128; --text: #ffffff; --green: #4cd964; }
-        body { background-color: var(--bg); color: var(--text); font-family: Arial, sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        body { background-color: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         .card { background: var(--card); border-radius: 18px; padding: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #30363d; margin-bottom: 15px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
         .balance-amount { font-size: 38px; font-weight: bold; color: var(--primary); margin-bottom: 15px; }
         .main-btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; }
@@ -24,28 +24,27 @@
     <div class="card">
         <div style="font-size: 14px; color: #aaa; margin-bottom: 5px;">رصيدك الحالي (بالدولار)</div>
         <div id="balance" class="balance-amount">0.0000</div>
-        <button id="adBtn" class="main-btn">كسب المال من الإعلانات 📺</button>
+        <button id="adBtn" class="main-btn">شاهد إعلان واربح 📺</button>
     </div>
 
-    <div style="width: 100%; max-width: 400px; text-align: right; margin-bottom: 8px; color: #8b949e; font-size: 14px;">ضاعف أرباحك</div>
+    <div style="width: 100%; max-width: 400px; text-align: right; margin-bottom: 8px; color: #8b949e; font-size: 14px;">نظام الإحالة</div>
     <div class="card" style="padding: 15px;">
-        <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">شارك الرابط مع أصدقائك لزيادة رصيدك!</p>
-        <button onclick="inviteFriends()" class="main-btn invite-btn">ارسل رابط الدعوة لأصدقائك 🔗</button>
+        <p style="font-size: 12px; color: #aaa; margin-bottom: 12px;">اربح عن كل صديق يدخل البوت من خلالك!</p>
+        <button onclick="inviteFriends()" class="main-btn invite-btn">دعوة الأصدقاء 🔗</button>
     </div>
 
-    <div style="width: 100%; max-width: 400px; text-align: right; margin-bottom: 8px; color: #8b949e; font-size: 14px;">المهام السريعة</div>
+    <div style="width: 100%; max-width: 400px; text-align: right; margin-bottom: 8px; color: #8b949e; font-size: 14px;">المهام</div>
     <div class="task-box">
         <div style="text-align: right;">
-            <div style="font-weight: bold; font-size: 14px;">متابعة قناة التليجرام</div>
+            <div style="font-weight: bold; font-size: 14px;">متابعة قناتنا الرسمية</div>
             <div style="color: var(--green); font-size: 12px;">+0.0012$ كاش</div>
         </div>
         <button onclick="doTask()" class="small-btn">انضمام</button>
     </div>
 
-    <div style="width: 100%; max-width: 400px; text-align: right; margin: 15px 0 8px 0; color: #8b949e; font-size: 14px;">سحب الأرباح</div>
     <div class="card">
         <p style="font-size: 12px; color: #8b949e; margin-bottom: 10px;">الحد الأدنى للسحب هو 2.00$</p>
-        <button id="withdrawBtn" onclick="checkWithdraw()" class="main-btn withdraw-btn">طلب سحب الأرباح 💸</button>
+        <button id="withdrawBtn" onclick="checkWithdraw()" class="main-btn withdraw-btn">سحب الأرباح 💸</button>
     </div>
 
     <script>
@@ -55,12 +54,11 @@
 
         const adConfig = { zoneId: 436685 };
 
+        // وظيفة الدعوة باستخدام المعرف الصحيح
         function inviteFriends() {
-            // سنشارك رابط الموقع مباشرة لتجنب أخطاء معرف البوت
-            const myUrl = 'https://vitas-ads-app.vercel.app/'; 
-            const text = 'ادخل جرب هذا البوت المذهل لربح المال من مشاهدة الإعلانات! 💰';
-            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(myUrl)}&text=${encodeURIComponent(text)}`;
-            
+            const botUser = 'VitasEarnAds_bot';
+            const shareText = encodeURIComponent('جرب هذا البوت المذهل لربح المال من مشاهدة الإعلانات! 💰📺');
+            const shareUrl = `https://t.me/share/url?url=https://t.me/${botUser}&text=${shareText}`;
             window.location.href = shareUrl;
         }
 
@@ -68,7 +66,7 @@
             if (window.onclicka) {
                 window.onclicka('show', adConfig);
             } else {
-                alert("الإعلانات قيد التحضير، يرجى المحاولة لاحقاً.");
+                alert("جاري تجهيز الإعلان...");
             }
         };
 
@@ -77,15 +75,12 @@
         });
 
         function doTask() {
-            const myChannel = 'https://t.me/fotgy';
-            window.open(myChannel, '_blank');
+            window.open('https://t.me/fotgy', '_blank');
             setTimeout(() => {
-                if(!localStorage.getItem('channel_task_done')) {
+                if(!localStorage.getItem('task_done_v1')) {
                     addBalance(0.0012);
-                    localStorage.setItem('channel_task_done', 'true');
-                    alert("تمت المهمة بنجاح! تم إضافة المكافأة.");
-                } else {
-                    alert("لقد قمت بهذه المهمة مسبقاً.");
+                    localStorage.setItem('task_done_v1', 'true');
+                    alert("تمت إضافة المكافأة!");
                 }
             }, 2000);
         }
@@ -101,15 +96,14 @@
             const wBtn = document.getElementById('withdrawBtn');
             if (balance >= targetWithdraw) {
                 wBtn.classList.add('active');
-                wBtn.innerText = "اسحب أرباحك الآن!";
             }
         }
 
         function checkWithdraw() {
             if (balance < targetWithdraw) {
-                alert("تحتاج لجمع 2 دولار لفتح ميزة السحب.");
+                alert("تحتاج لجمع 2 دولار للسحب.");
             } else {
-                alert("تم إرسال طلب السحب للمراجعة.");
+                alert("تم استلام الطلب.");
             }
         }
     </script>
