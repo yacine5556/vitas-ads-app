@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitas Gold</title>
+    <title>Vitas Gold - Final</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script async src="https://js.onclckmn.com/static/onclicka.js" data-admpid="437222"></script>
@@ -23,82 +23,65 @@
             <div class="w-10 h-10 bg-green-700 rounded-full flex items-center justify-center text-white font-bold">VG</div>
             <h1 class="text-sm font-bold text-gray-800">Vitas Gold</h1>
         </div>
-        <div class="bg-green-50 px-3 py-1 rounded-full border border-green-100 flex items-center gap-1">
-            <span class="text-xs font-bold text-green-700" id="header-balance">0.009</span> 
-            <span class="text-[10px] text-green-600">TON</span>
+        <div class="bg-green-50 px-3 py-1 rounded-full border border-green-100">
+            <span class="text-xs font-bold text-green-700" id="header-balance">0.009</span> <span class="text-[10px] text-green-600">TON</span>
         </div>
     </header>
 
     <main class="p-4">
         <div id="earn" class="page active">
-            <h2 class="text-lg font-bold mb-4 text-gray-700 pr-2">المهام المحدودة</h2>
-            <div class="space-y-4">
-                <div class="card p-4 flex justify-between items-center border border-gray-100">
+            <h2 class="text-lg font-bold mb-4 text-gray-700">مركز الأرباح</h2>
+
+            <div class="card p-5 border-2 border-green-100 mb-6 bg-green-50/20">
+                <div class="flex justify-between items-center mb-4">
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-2xl">⚽</div>
+                        <div class="w-12 h-12 bg-red-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">🎥</div>
                         <div>
-                            <p class="text-sm font-bold text-gray-800">Foot 1243</p>
-                            <p class="text-[10px] text-green-600 font-semibold">0.001+ TON</p>
+                            <p class="text-sm font-bold text-gray-800">فيديوهات إعلانية</p>
+                            <p class="text-[10px] text-green-700 font-bold">شاهد 20 فيديو لتربح 0.001 TON</p>
                         </div>
                     </div>
-                    <button onclick="verifyTask(0.001)" class="bg-green-700 hover:bg-green-800 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-md active:scale-95 transition-all">تحقق</button>
+                    <span class="text-xs font-black bg-white px-3 py-1 rounded-full border shadow-sm" id="v-counter">0/20</span>
                 </div>
-
-                <div class="card p-4 flex justify-between items-center border border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-2xl">🔥</div>
-                        <div>
-                            <p class="text-sm font-bold text-gray-800">Fotgy</p>
-                            <p class="text-[10px] text-green-600 font-semibold">0.001+ TON</p>
-                        </div>
-                    </div>
-                    <button onclick="verifyTask(0.001)" class="bg-green-700 hover:bg-green-800 text-white px-5 py-2.5 rounded-2xl text-xs font-bold shadow-md active:scale-95 transition-all">تحقق</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="withdraw" class="page text-center pt-8">
-            <div class="bg-white p-8 rounded-[40px] shadow-xl border border-gray-50 mx-2">
-                <p class="text-xs text-gray-400 font-bold mb-2 uppercase tracking-widest">الرصيد الكلي</p>
-                <h3 class="text-4xl font-black text-green-800 mb-8 tracking-tighter"><span id="withdraw-balance">0.009</span> <span class="text-lg">TON</span></h3>
-                <button class="w-full bg-gray-100 text-gray-400 py-4 rounded-3xl font-bold text-sm cursor-not-allowed">أدخل المحفظة أولاً</button>
+                
+                <button onclick="startAdProcess()" class="w-full bg-green-700 hover:bg-green-800 text-white py-4 rounded-2xl text-xs font-bold shadow-md active:scale-95 transition-all">
+                    تشغيل الفيديو الآن 🎬
+                </button>
             </div>
         </div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t flex justify-around p-3 shadow-2xl z-50">
-        <button onclick="nav('earn', this)" class="nav-item active flex flex-col items-center w-full transition-colors">
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t flex justify-around p-3 z-50">
+        <button class="nav-item active flex flex-col items-center w-full">
             <span class="text-xl">💰</span>
-            <span class="text-[10px] font-extrabold uppercase mt-1">Earn</span>
+            <span class="text-[10px] font-bold">كسب</span>
         </button>
-        <button onclick="nav('withdraw', this)" class="nav-item flex flex-col items-center w-full transition-colors text-gray-400">
+        <button class="nav-item flex flex-col items-center w-full text-gray-400">
             <span class="text-xl">💧</span>
-            <span class="text-[10px] font-extrabold uppercase mt-1">Withdraw</span>
+            <span class="text-[10px] font-bold">سحب</span>
         </button>
     </nav>
 
     <script>
-        // كود التحكم في الرصيد والتنقل
-        let balance = 0.009;
+        // المتغيرات البرمجية للرصيد والعداد
+        let userBalance = 0.009;
+        let watchedCount = 0;
 
-        function nav(id, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(i => {
-                i.classList.remove('active');
-                i.classList.add('text-gray-400');
-            });
-            btn.classList.add('active');
-            btn.classList.remove('text-gray-400');
-        }
-
-        function verifyTask(amt) {
-            balance += amt;
-            document.getElementById('header-balance').innerText = balance.toFixed(3);
-            document.getElementById('withdraw-balance').innerText = balance.toFixed(3);
-            alert("✅ رائع! تمت إضافة 0.001 TON لرصيدك.");
+        function startAdProcess() {
+            // هنا الكود يقوم بزيادة العداد عند كل نقرة تظهر فيها الإعلانات
+            if (watchedCount < 20) {
+                watchedCount++;
+                document.getElementById('v-counter').innerText = watchedCount + "/20";
+                
+                if (watchedCount === 20) {
+                    userBalance += 0.001;
+                    document.getElementById('header-balance').innerText = userBalance.toFixed(3);
+                    alert("✅ مبروك! حصلت على 0.001 TON بعد مشاهدة 20 إعلان.");
+                    watchedCount = 0;
+                    document.getElementById('v-counter').innerText = "0/20";
+                }
+            }
         }
     </script>
-
 </body>
 </html>
