@@ -32,4 +32,64 @@
                 <span class="text-2xl">💰</span> مركز المهام
             </h2>
 
-            <div
+            <div class="card p-6 mb-6 relative overflow-hidden">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-red-600/20 rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-red-500/20">📺</div>
+                        <div>
+                            <p class="text-base font-bold">مشاهدة إعلانات حقيقية</p>
+                            <p class="text-xs text-green-400 font-medium">اربح 0.001 TON كل 20 فيديو</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 px-3 py-1 rounded-lg border border-slate-700">
+                        <span class="text-sm font-black text-red-500" id="counter">0/20</span>
+                    </div>
+                </div>
+
+                <button onclick="playRealVideoAd()" class="w-full btn-gold text-white py-4 rounded-2xl text-sm font-black transition-all active:scale-95 shadow-xl">
+                    تشغيل الفيديو الآن 🎬
+                </button>
+                
+                <p class="text-[10px] text-center mt-3 text-slate-500 italic">سيتم فتح الإعلان في نافذة جديدة، يرجى العودة بعد المشاهدة.</p>
+            </div>
+        </div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 flex justify-around p-4">
+        <div class="flex flex-col items-center text-green-500">
+            <span class="text-2xl">💸</span>
+            <span class="text-[10px] font-bold mt-1">كسب</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-500">
+            <span class="text-2xl">📥</span>
+            <span class="text-[10px] font-bold mt-1">سحب</span>
+        </div>
+    </nav>
+
+    <script>
+        let currentBalance = 0.009;
+        let currentCount = 0;
+
+        function playRealVideoAd() {
+            // 1. استدعاء الإعلان الحقيقي (Popunder) لضمان تسجيل الربح في OnClickA
+            // سيقوم بفتح رابط الإعلانات الخاص بمعرفك 437222
+            window.open('https://js.onclckmn.com/static/onclicka.js?data-admpid=437222', '_blank');
+
+            // 2. تحديث عداد البوت الداخلي للمستخدم
+            if (currentCount < 20) {
+                currentCount++;
+                document.getElementById('counter').innerText = currentCount + "/20";
+                
+                if (currentCount === 20) {
+                    currentBalance += 0.001;
+                    document.getElementById('balance').innerText = currentBalance.toFixed(3);
+                    alert("🎉 أحسنت! شاهدت 20 فيديو وحصلت على المكافأة.");
+                    currentCount = 0;
+                    document.getElementById('counter').innerText = "0/20";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
