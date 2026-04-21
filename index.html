@@ -10,6 +10,8 @@
         body { background-color: #0f172a; color: white; font-family: sans-serif; }
         .gold-gradient { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; }
         .balance-card { background: rgba(30, 41, 59, 0.7); border-radius: 20px; border: 1px solid #10b981; }
+        .pulse { animation: pulse-animation 2s infinite; }
+        @keyframes pulse-animation { 0% { box-shadow: 0 0 0 0px rgba(16, 185, 129, 0.4); } 100% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
     </style>
 </head>
 <body class="p-4">
@@ -19,8 +21,11 @@
         <div class="balance-card px-4 py-2 flex items-center gap-2">
             <span class="text-green-500 text-xs font-bold">TON</span>
             <span id="balance" class="font-mono text-lg">0.009</span>
+            <div class="w-2 h-2 bg-green-500 rounded-full pulse"></div>
         </div>
     </div>
+
+    <h2 class="text-center text-gray-400 mb-6 text-lg">مركز المهام المربحة</h2>
 
     <div class="gold-gradient rounded-3xl p-6 mb-8 flex justify-between items-center">
         <div>
@@ -35,15 +40,19 @@
         </div>
     </div>
 
+    <div class="bg-yellow-900/20 border border-yellow-700/50 rounded-xl p-4 text-center">
+        <p class="text-yellow-500 text-xs">ملاحظة: يجب مشاهدة الإعلان لنهايته لضمان احتساب الرصيد.</p>
+    </div>
+
     <script>
         // الرصيد الابتدائي المأخوذ من صورتك
         let balance = 0.009; 
 
         function runVipAd() {
-            // هذا هو الرابط المباشر الخاص بك من Adsterra بعد إضافة رقمك
+            // رابط Adsterra المباشر الخاص بك مع رقم المعرف 29112603
             window.open('https://voutmous.com/4/29112603', '_blank');
             
-            // تحديث الرصيد تلقائياً عند الضغط
+            // تحديث الرصيد تلقائياً في الواجهة عند الضغط
             balance += 0.002;
             document.getElementById('balance').innerText = balance.toFixed(3);
         }
