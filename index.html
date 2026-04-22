@@ -1,102 +1,52 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WORKERS ON TON PRO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { background-color: #0b0f1a; color: white; font-family: sans-serif; overflow-x: hidden; }
-        .gold-card { background: linear-gradient(145deg, #161b22, #0d1117); border: 1px solid #30363d; border-radius: 24px; }
-        .nav-bar { background: rgba(22, 27, 34, 0.95); backdrop-filter: blur(10px); border-top: 1px solid #30363d; }
-        .tab-content { display: none; }
-        .tab-active { display: block; }
-        .ton-btn { background: #0088cc; border-radius: 12px; }
-    </style>
-</head>
-<body class="pb-24">
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ContextTypes
 
-    <div class="p-6 text-center">
-        <p class="text-gray-400 text-sm mb-1">رصيدك الحالي</p>
-        <div class="flex justify-center items-center gap-2">
-            <img src="https://cryptologos.cc/logos/toncoin-ton-logo.png" class="w-8 h-8" alt="TON">
-            <span id="main-balance" class="text-4xl font-bold">0.009</span>
-        </div>
-    </div>
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """إرسال لوحة تحكم احترافية عند الضغط على /start"""
+    
+    # --- 1. جلب بيانات المستخدم من قاعدة البيانات (مثال) ---
+    user_id = update.effective_user.id
+    # هنا يجب استبدال هذا السطر بجلب الرصيد الحقيقي من SQLite/PostgreSQL
+    current_balance = 0.009  # قيمة افتراضية مؤقتة، استبدلها بجلب البيانات
+    
+    # --- 2. تصميم الأزرار (Inline Keyboard) ---
+    keyboard = [
+        # صف الأزرار الأول: الإعلانات والمهمة
+        [
+            InlineKeyboardButton("📺 شاهد واربح (Adsgram)", callback_data="watch_ads"),
+            InlineKeyboardButton("👑 مهمة VIP اليوم", callback_data="vip_task")
+        ],
+        # صف الأزرار الثاني: السحب والإحالات
+        [
+            InlineKeyboardButton("💰 سحب الرصيد", callback_data="withdraw"),
+            InlineKeyboardButton("👥 إحالة الأصدقاء", callback_data="referral")
+        ],
+        # صف الأزرار الثالث: الإحصائيات والدعم
+        [
+            InlineKeyboardButton("📊 إحصائياتي", callback_data="stats"),
+            InlineKeyboardButton("ℹ️ الدعم والمساعدة", callback_data="help")
+        ]
+    ]
+    
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    # --- 3. نص الرسالة الترحيبية (بتنسيق Markdown) ---
+    message_text = f"""
+🏆 *مرحباً بك في Vitas Gold*
 
-    <div class="px-4">
-        
-        <div id="home-tab" class="tab-content tab-active">
-            <div class="gold-card p-6 mb-4 text-center">
-                <i class="fas fa-play-circle text-4xl text-blue-500 mb-2"></i>
-                <h3 class="font-bold">شاهد واربح (Adsgram)</h3>
-                <p class="text-xs text-gray-500 mb-4">اربح 0.002 TON عن كل فيديو</p>
-                <button onclick="showVideoAd()" class="w-full py-3 ton-btn font-bold">عرض الإعلان 📺</button>
-            </div>
-            
-            <div class="gold-card p-4 mb-4 flex justify-between items-center">
-                <div>
-                    <h4 class="font-bold text-sm">مهمة VIP اليومية</h4>
-                    <p class="text-xs text-purple-400">ربح عالي جداً</p>
-                </div>
-                <button onclick="window.open('https://voutmous.com/4/3260743')" class="bg-purple-600 px-4 py-2 rounded-lg text-xs">فتح 🚀</button>
-            </div>
-        </div>
+💰 *رصيدك الحالي:* `{current_balance:.3f} USDT`
 
-        <div id="friends-tab" class="tab-content">
-            <h2 class="text-xl font-bold mb-4">ادعُ أصدقاءك</h2>
-            <div class="gold-card p-6 text-center">
-                <p class="text-sm text-gray-400 mb-4">ستحصل على 10% من أرباح كل صديق يدخل من رابطك</p>
-                <div class="bg-gray-800 p-3 rounded-lg flex justify-between items-center mb-4">
-                    <span class="text-xs text-blue-400">t.me/your_bot?start=user123</span>
-                    <button class="text-xs font-bold">نسخ</button>
-                </div>
-                <p class="text-xs text-gray-500">إجمالي الإحالات: <span class="text-white">0</span></p>
-            </div>
-        </div>
+🎬 *مركز الربح اليومي*
+├── 📺 *Adsgram:* شاهد واربح 0.002 عن كل فيديو
+└── 👑 *مهمة VIP:* ربح عالي للمستخدمين النشطين
 
-        <div id="wallet-tab" class="tab-content text-center">
-            <h2 class="text-xl font-bold mb-4">السحب والمحفظة</h2>
-            <div class="gold-card p-8">
-                <i class="fas fa-wallet text-5xl text-gray-600 mb-4"></i>
-                <p class="text-sm mb-6">اربط محفظة TON الخاصة بك لتتمكن من سحب أرباحك</p>
-                <button class="ton-btn w-full py-3 font-bold mb-4">Connect Wallet 💎</button>
-                <p class="text-xs text-red-500">الحد الأدنى للسحب: 0.5 TON</p>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="nav-bar fixed bottom-0 left-0 right-0 h-20 flex justify-around items-center px-4">
-        <button onclick="switchTab('home-tab')" class="flex flex-col items-center gap-1 text-blue-500">
-            <i class="fas fa-tasks"></i>
-            <span class="text-[10px]">المهام</span>
-        </button>
-        <button onclick="switchTab('friends-tab')" class="flex flex-col items-center gap-1 text-gray-400">
-            <i class="fas fa-users"></i>
-            <span class="text-[10px]">الأصدقاء</span>
-        </button>
-        <button onclick="switchTab('wallet-tab')" class="flex flex-col items-center gap-1 text-gray-400">
-            <i class="fas fa-wallet"></i>
-            <span class="text-[10px]">المحفظة</span>
-        </button>
-    </div>
-
-    <script>
-        let balance = 0.009;
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('tab-active'));
-            document.getElementById(tabId).classList.add('tab-active');
-        }
-
-        function showVideoAd() {
-            // هذا التنبيه سيتم استبداله بكود Adsgram الحقيقي لاحقاً
-            alert("جارٍ تحميل فيديو Adsgram...");
-            balance += 0.002;
-            document.getElementById('main-balance').innerText = balance.toFixed(3);
-        }
-    </script>
-</body>
-</html>
+اختر أحد الخيارات من القائمة أدناه 👇
+"""
+    
+    # --- 4. إرسال الرسالة (تحرير القديمة إذا كانت موجودة) ---
+    # يفضل استخدام `reply_text` دائماً لبدء المحادثة
+    await update.message.reply_text(
+        text=message_text,
+        reply_markup=reply_markup,
+        parse_mode='Markdown'
+    )
