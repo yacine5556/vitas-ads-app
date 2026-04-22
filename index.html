@@ -1,19 +1,61 @@
-# database/models.py - مثال باستخدام SQLAlchemy
+# database/models.py
+from sqlalchemy import Column, Integer, BigInteger, Float, String, DateTime, ForeignKey, create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
+from datetime import datetime
+import os
+
+Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'users'
+    
     id = Column(Integer, primary_key=True)
-    telegram_id = Column(BigInteger, unique=True)
+    telegram_id = Column(BigInteger, unique=True, nullable=False, index=True)  # فهرس للبحث السريع
     balance = Column(Float, default=0.0)
-    referral_code = Column(String, unique=True)
-    referred_by = Column(BigInteger, ForeignKey('users.telegram_id'))
+    referral_code = Column(String, unique=True, nullable=True)  # كود الإحالة الخاص به
+    referred_by = Column(BigInteger, ForeignKey('users.telegram_id'), nullable=True)  # من أحاله
     vip_level = Column(String, default='bronze')
-    last_vip_task = Column(DateTime)
+    last_vip_task = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # علاقة مع جدول العمليات
+    transactions = relationship("Transaction", back_populates="user")
+    
+    def __repr__(self):
+        return f"<User(tg_id={self.telegram_id}, balance={self.balance})>"
 
 class Transaction(Base):
     __tablename__ = 'transactions'
+    
     id = Column(Integer, primary_key=True)
-    user_id = Column(BigInteger, ForeignKey('users.telegram_id'))
-    amount = Column(Float)
-    type = Column(String)  # 'ad_reward', 'referral_bonus', 'vip_task'
+    user_id = Column(BigInteger, ForeignKey('users.telegram_id'), nullable=False)  # تصحيح المفتاح الأجنبي
+    amount = Column(Float, nullable=False)
+    type = Column(String, nullable=False)  # 'ad_reward', 'referral_bonus', 'vip_task', 'withdraw'
+    description = Column(String, nullable=True)
     timestamp = Column(DateTime, default=datetime.utcnow)
+    
+    # علاقة عكسية مع المستخدم
+    user = relationship("User", back_populates="transactions")
+    
+    def __repr__(self):
+        return f"<Transaction(user={self.user_id}, amount={self.amount}, type={self.type})>"
+
+# --- إعداد الاتصال بقاعدة البيانات ---
+# استخدم SQLite للتطوير المحلي، و PostgreSQL للإنتاج
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///vitas_gold.db")
+
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
+
+# دالة لإنشاء الجداول
+def init_db():
+    Base.metadata.create_all(bind=engine)
+
+# دالة للحصول على جلسة قاعدة بيانات (لاستخدامها في كل طلب)
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
