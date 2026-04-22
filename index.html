@@ -1,52 +1,19 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ContextTypes
+# database/models.py - مثال باستخدام SQLAlchemy
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """إرسال لوحة تحكم احترافية عند الضغط على /start"""
-    
-    # --- 1. جلب بيانات المستخدم من قاعدة البيانات (مثال) ---
-    user_id = update.effective_user.id
-    # هنا يجب استبدال هذا السطر بجلب الرصيد الحقيقي من SQLite/PostgreSQL
-    current_balance = 0.009  # قيمة افتراضية مؤقتة، استبدلها بجلب البيانات
-    
-    # --- 2. تصميم الأزرار (Inline Keyboard) ---
-    keyboard = [
-        # صف الأزرار الأول: الإعلانات والمهمة
-        [
-            InlineKeyboardButton("📺 شاهد واربح (Adsgram)", callback_data="watch_ads"),
-            InlineKeyboardButton("👑 مهمة VIP اليوم", callback_data="vip_task")
-        ],
-        # صف الأزرار الثاني: السحب والإحالات
-        [
-            InlineKeyboardButton("💰 سحب الرصيد", callback_data="withdraw"),
-            InlineKeyboardButton("👥 إحالة الأصدقاء", callback_data="referral")
-        ],
-        # صف الأزرار الثالث: الإحصائيات والدعم
-        [
-            InlineKeyboardButton("📊 إحصائياتي", callback_data="stats"),
-            InlineKeyboardButton("ℹ️ الدعم والمساعدة", callback_data="help")
-        ]
-    ]
-    
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    # --- 3. نص الرسالة الترحيبية (بتنسيق Markdown) ---
-    message_text = f"""
-🏆 *مرحباً بك في Vitas Gold*
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    telegram_id = Column(BigInteger, unique=True)
+    balance = Column(Float, default=0.0)
+    referral_code = Column(String, unique=True)
+    referred_by = Column(BigInteger, ForeignKey('users.telegram_id'))
+    vip_level = Column(String, default='bronze')
+    last_vip_task = Column(DateTime)
 
-💰 *رصيدك الحالي:* `{current_balance:.3f} USDT`
-
-🎬 *مركز الربح اليومي*
-├── 📺 *Adsgram:* شاهد واربح 0.002 عن كل فيديو
-└── 👑 *مهمة VIP:* ربح عالي للمستخدمين النشطين
-
-اختر أحد الخيارات من القائمة أدناه 👇
-"""
-    
-    # --- 4. إرسال الرسالة (تحرير القديمة إذا كانت موجودة) ---
-    # يفضل استخدام `reply_text` دائماً لبدء المحادثة
-    await update.message.reply_text(
-        text=message_text,
-        reply_markup=reply_markup,
-        parse_mode='Markdown'
-    )
+class Transaction(Base):
+    __tablename__ = 'transactions'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(BigInteger, ForeignKey('users.telegram_id'))
+    amount = Column(Float)
+    type = Column(String)  # 'ad_reward', 'referral_bonus', 'vip_task'
+    timestamp = Column(DateTime, default=datetime.utcnow)
